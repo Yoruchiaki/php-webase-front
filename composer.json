@@ -1,0 +1,48 @@
+{
+    "name": "yoruchiaki/php-webase-front",
+    "description": "Package description here.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Yoruchiaki",
+            "email": "saberlove@me.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4",
+        "guzzlehttp/guzzle": "^7.3",
+        "ext-bcmath": "*",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Yoruchiaki\\WebaseFront\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Yoruchiaki\\WebaseFront\\ServiceProvider"
+            ],
+            "aliases": {
+                "Webase": "Yoruchiaki\\WebaseFront\\Facade"
+            }
+        }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^3.1",
+        "phpunit/phpunit": "*",
+        "mockery/mockery": "*",
+        "fakerphp/faker": "*"
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php vendor/bin/testbench package:discover --ansi"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "kylekatarnls/update-helper": true
+        }
+    }
+}
