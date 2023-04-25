@@ -2,15 +2,15 @@
 
 ## 项目
 
-本项目对WebaseFront提供PHP的SDK调用,只需要进行简单配置即可调用Webase节点前置服务
-
+### 本项目提供对 Webase-Front-Node 前置服务的接口调用
+### 针对Laravel提供开箱可用的支持
 ## 安装
 
 ```shell
 $ composer require yoruchiaki/php-webase-front
 ```
 
-## 已完成的(已完成测试)
+## 已完成的(已完成E2E测试)
 
 - 合约接口 [Abi](src%2FServices%2FAbi)
 - 密钥接口 [PrivateKey](src%2FServices%2FPrivateKey)
