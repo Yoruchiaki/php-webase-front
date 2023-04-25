@@ -1,6 +1,6 @@
 {
     "name": "yoruchiaki/php-webase-front",
-    "description": "Package description here.",
+    "description": "使用PHP对WebaseFront节点前置服务提供调用",
     "license": "MIT",
     "authors": [
         {
