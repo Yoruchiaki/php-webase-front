@@ -1,12 +1,12 @@
 # PHP-WEBASE
 
 ## 项目
-本项目对Webase提供PHP的SDK调用,只需要进行简单的配置即可开发针对Webase平台的应用
+本项目对WebaseFront提供PHP的SDK调用,只需要进行简单配置即可调用Webase节点前置服务
 
 ## Installing
 
 ```shell
-$ composer require yoruchiaki/php-webase -vvv
+$ composer require yoruchiaki/php-webase-front -vvv
 ```
 
 ## Usage
