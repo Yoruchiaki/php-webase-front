@@ -2,14 +2,16 @@
 
 namespace Yoruchiaki\WebaseFront;
 
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Yoruchiaki\WebaseFront\HttpClient\AppConfig;
 use Yoruchiaki\WebaseFront\HttpClient\HttpRequest;
+use Yoruchiaki\WebaseFront\Interfaces\HttpRequestInterface;
 use Yoruchiaki\WebaseFront\Services\Abi\AbiService;
+use Yoruchiaki\WebaseFront\Services\PrivateKey\PrivateKeyService;
+use Yoruchiaki\WebaseFront\Services\Trans\TransService;
 
-class ServiceProvider extends \Illuminate\Support\ServiceProvider
+class ServiceProvider extends \Illuminate\Support\ServiceProvider implements DeferrableProvider
 {
-    protected $defer = true;
-
     /**
      * 引导包服务
      */
@@ -26,20 +28,32 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->mergeConfigFrom(
             __DIR__.'/../config/webase-front.php', 'webase-front'
         );
-        $httpClient = new HttpRequest(
-            new AppConfig(
-                config('webase-front.frontUrl'),
-                config('webase-front.timeout')
-            )
-        );
-        $this->app->singleton(AbiService::class, function () use ($httpClient) {
-            return new AbiService($httpClient);
+        $this->app->bind(HttpRequestInterface::class, function () {
+            return new HttpRequest(
+                new AppConfig(
+                    config('webase-front.frontUrl'),
+                    config('webase-front.timeout')
+                )
+            );
+        });
+        $this->app->singleton(AbiService::class, function ($app) {
+            return new AbiService($app->make(HttpRequestInterface::class));
+        });
+
+        $this->app->singleton(TransService::class, function ($app) {
+            return new TransService($app->make(HttpRequestInterface::class));
+        });
+
+        $this->app->singleton(PrivateKeyService::class, function ($app) {
+            return new PrivateKeyService($app->make(HttpRequestInterface::class));
         });
         $this->app->alias(AbiService::class, 'Abi');
+        $this->app->alias(TransService::class, 'Trans');
+        $this->app->alias(PrivateKeyService::class, 'Pk');
     }
 
     public function provides(): array
     {
-        return [AbiService::class, 'Abi'];
+        return [AbiService::class, TransService::class, PrivateKeyService::class];
     }
 }

@@ -155,7 +155,7 @@ class PrivateKeyService extends BaseService implements PrivateKeyInterface
      */
     public function userInfoWithSign(string $signUserId, bool $returnPrivateKey): array
     {
-        return $this->http->request('POST', 'privateKey/userInfoWithSign', [
+        return $this->http->request('GET', 'privateKey/userInfoWithSign', [
             'signUserId'       => $signUserId,
             'returnPrivateKey' => $returnPrivateKey
         ]);

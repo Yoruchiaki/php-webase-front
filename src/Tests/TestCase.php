@@ -8,6 +8,7 @@ use Yoruchiaki\WebaseFront\HttpClient\AppConfig;
 use Yoruchiaki\WebaseFront\HttpClient\HttpRequest;
 use Yoruchiaki\WebaseFront\Services\Abi\AbiService;
 use Yoruchiaki\WebaseFront\Services\PrivateKey\PrivateKeyService;
+use Yoruchiaki\WebaseFront\Services\Tool\ToolService;
 use Yoruchiaki\WebaseFront\Services\Trans\TransService;
 use Yoruchiaki\WebaseFront\ValueObjects\SolidityAbi;
 use Yoruchiaki\WebaseFront\ValueObjects\SolidityBin;
@@ -34,6 +35,8 @@ class TestCase extends \PHPUnit\Framework\TestCase
     protected PrivateKeyService $pkClient;
     protected TransService      $transClient;
 
+    protected ToolService $toolClient;
+
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
@@ -53,6 +56,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
         $this->abiClient = new AbiService($httpClient);
         $this->pkClient = new PrivateKeyService($httpClient);
         $this->transClient = new TransService($httpClient);
+        $this->toolClient = new ToolService($httpClient);
     }
 
     protected function assertAllResponseKey(array $exist_key, array $response_array)

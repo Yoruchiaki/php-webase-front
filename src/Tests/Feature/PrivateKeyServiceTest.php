@@ -87,4 +87,23 @@ class PrivateKeyServiceTest extends TestCase
             'signUserId' => $signUserId
         ], $res);
     }
+
+    /**
+     * @test
+     * @return void
+     * @throws GuzzleException
+     */
+    public function userInfo()
+    {
+        $signUserId = str_replace('-', '', $this->faker->uuid());
+        $res = $this->pkClient->importWithSign($signUserId, $this->appId, base64_encode($this->privateKey));
+        $res = $this->pkClient->userInfoWithSign($signUserId, false);
+        $this->assertAllResponseKey([
+            'signUserId' => $signUserId,
+            'appId'      => $this->appId,
+            'address',
+            'publicKey',
+            'privateKey' => ''
+        ], $res);
+    }
 }
