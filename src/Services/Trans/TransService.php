@@ -58,7 +58,7 @@ class TransService extends BaseService implements TransInterface
         string $funcName,
         SolidityAbi $contractAbi,
         array $funcParam = []
-    ) {
+    ): array {
         return $this->http->request('POST', 'trans/handle', [
             'user'            => $user,
             'contractName'    => $contractName,
@@ -187,7 +187,7 @@ class TransService extends BaseService implements TransInterface
         int $groupId = 1,
         string $contractPath = null,
         bool $useCns = false
-    ) {
+    ): array {
         return $this->http->request('POST', 'trans/convertRawTxStr/local', [
             'user'            => $user,
             'contractName'    => $contractName,

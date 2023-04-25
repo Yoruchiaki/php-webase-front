@@ -23,9 +23,9 @@ interface TransInterface
         string $funcName,
         SolidityAbi $contractAbi,
         array $funcParam = []
-    );
+    ): array;
 
-    public function signedTransaction(string $signedStr, bool $sync, int $groupId = 1);
+    public function signedTransaction(string $signedStr, bool $sync, int $groupId = 1): array;
 
     public function queryTransaction(
         string $encodeStr,
@@ -33,12 +33,12 @@ interface TransInterface
         string $groupId,
         string $funcName,
         SolidityAbi $contractAbi
-    );
+    ): array;
 
     public function signMessageHash(
         string $user,
         string $hash
-    );
+    ): array;
 
     public function convertRawTxStrWithSign(
         string $signUserId,
@@ -49,7 +49,7 @@ interface TransInterface
         array $funcParam,
         int $groupId = 1,
         bool $useCns = false
-    );
+    ): array;
 
     public function convertRawTxStrWithLocal(
         string $user,
@@ -61,7 +61,7 @@ interface TransInterface
         int $groupId = 1,
         string $contractPath = null,
         bool $useCns = false
-    );
+    ): array;
 
-    public function encodeFunction(string $funcName, SolidityAbi $contractAbi, array $funcParam);
+    public function encodeFunction(string $funcName, SolidityAbi $contractAbi, array $funcParam): array;
 }

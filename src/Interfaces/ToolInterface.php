@@ -6,17 +6,17 @@ use Yoruchiaki\WebaseFront\ValueObjects\SolidityAbi;
 
 interface ToolInterface
 {
-    public function decode(int $decodeType, string $methodName, string $input, SolidityAbi $abiList, string $output);
+    public function decode(int $decodeType, string $methodName, string $input, SolidityAbi $abiList, string $output): array;
 
-    public function keypair(string $privateKey);
+    public function keypair(string $privateKey): array;
 
-    public function address(string $publicKey);
+    public function address(string $publicKey): array;
 
-    public function hash(string $input, int $type = 1);
+    public function hash(string $input, int $type = 1): array;
 
-    public function convert2Bytes32(string $input, int $type = 1);
+    public function convert2Bytes32(string $input, int $type = 1): array;
 
-    public function utf8ToHexString(string $input);
+    public function utf8ToHexString(string $input): array;
 
-    public function signMsg(string $privateKey, string $rawData);
+    public function signMsg(string $privateKey, string $rawData): array;
 }

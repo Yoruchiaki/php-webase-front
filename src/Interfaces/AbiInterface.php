@@ -14,7 +14,7 @@ interface AbiInterface
         string $address,
         array $abiInfo,
         SolidityBin $contractBin
-    );
+    ): array;
 
     public function deployWithSign(
         int $groupId,
@@ -24,7 +24,7 @@ interface AbiInterface
         string $contractName,
         array $funcParam = [],
         string $version = null
-    );
+    ): array;
 
     public function deploy(
         int $groupId,
@@ -33,13 +33,13 @@ interface AbiInterface
         SolidityBin $bytecodeBin,
         string $contractName = null,
         array $funcParam = null
-    );
+    ): array;
 
     /**
      * @return mixed
      * @deprecated
      */
-    public function compileJava(string $contractName, array $abiInfo, string $contractBin, string $packageName);
+    public function compileJava(string $contractName, array $abiInfo, string $contractBin, string $packageName): array;
 
     public function save(
         int $groupId,
@@ -48,9 +48,9 @@ interface AbiInterface
         SoliditySource $contractSource,
         SolidityAbi $contractAbi,
         SolidityBin $contractBin
-    );
+    ): array;
 
-    public function deleteContract(int $groupId, int $contractId);
+    public function deleteContract(int $groupId, int $contractId): array;
 
     public function contractList(
         int $groupId,
@@ -60,25 +60,25 @@ interface AbiInterface
         int $contractStatus = null,
         string $contractAddress = null,
         string $contractPath = null
-    );
+    ): array;
 
-    public function ifChanged(int $groupId, int $contractId);
+    public function ifChanged(int $groupId, int $contractId): array;
 
-    public function contractCompile(string $contractName, SoliditySource $solidityBase64);
+    public function contractCompile(string $contractName, SoliditySource $solidityBase64): array;
 
-    public function multiContractCompile(string $contractZipBase64);
+    public function multiContractCompile(string $contractZipBase64): array;
 
-    public function contractListFull(int $groupId, int $contractStatus);
+    public function contractListFull(int $groupId, int $contractStatus): array;
 
-    public function findOne(int $contractId);
+    public function findOne(int $contractId): array;
 
-    public function findContractPathList(int $groupId);
+    public function findContractPathList(int $groupId): array;
 
-    public function addContractPath(int $groupId, string $contractPath);
+    public function addContractPath(int $groupId, string $contractPath): array;
 
-    public function deleteContractPath(int $groupId, string $contractPath);
+    public function deleteContractPath(int $groupId, string $contractPath): array;
 
-    public function deleteContractByPath(int $groupId, string $contractPath);
+    public function deleteContractByPath(int $groupId, string $contractPath): array;
 
     public function registerCns(
         int $groupId,
@@ -88,7 +88,7 @@ interface AbiInterface
         SolidityAbi $abiInfo,
         string $version,
         string $signUserId
-    );
+    ): array;
 
-    public function findCns(int $groupId, string $contractAddress);
+    public function findCns(int $groupId, string $contractAddress): array;
 }
