@@ -3,12 +3,12 @@
 namespace Yoruchiaki\WebaseFront\Services\Abi;
 
 use GuzzleHttp\Exception\GuzzleException;
-use Yoruchiaki\WebaseFront\Interfaces\AbiInterface;
+use Yoruchiaki\WebaseFront\Interfaces\ContractInterface;
 use Yoruchiaki\WebaseFront\Services\BaseService;
 use Yoruchiaki\WebaseFront\ValueObjects\Solidity;
 use Yoruchiaki\WebaseFront\ValueObjects\SoliditySol;
 
-class AbiService extends BaseService implements AbiInterface
+class ContractService extends BaseService implements ContractInterface
 {
     /**
      * @param  Solidity  $solidity  合约对象

@@ -3,7 +3,7 @@
 namespace Yoruchiaki\WebaseFront\Facade;
 
 use Illuminate\Support\Facades\Facade;
-use Yoruchiaki\WebaseFront\Services\Abi\AbiService;
+use Yoruchiaki\WebaseFront\Services\Abi\ContractService;
 use Yoruchiaki\WebaseFront\Services\PrivateKey\PrivateKeyService;
 
 class PrivateKeyFacade extends Facade

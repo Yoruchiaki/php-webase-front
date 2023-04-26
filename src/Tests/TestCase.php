@@ -6,7 +6,7 @@ use Faker\Factory;
 use Faker\Generator;
 use Yoruchiaki\WebaseFront\HttpClient\AppConfig;
 use Yoruchiaki\WebaseFront\HttpClient\HttpRequest;
-use Yoruchiaki\WebaseFront\Services\Abi\AbiService;
+use Yoruchiaki\WebaseFront\Services\Abi\ContractService;
 use Yoruchiaki\WebaseFront\Services\PrivateKey\PrivateKeyService;
 use Yoruchiaki\WebaseFront\Services\Tool\ToolService;
 use Yoruchiaki\WebaseFront\Services\Trans\TransService;
@@ -17,7 +17,7 @@ use Yoruchiaki\WebaseFront\ValueObjects\SoliditySol;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
-    protected AbiService $abiClient;
+    protected ContractService $abiClient;
 
     protected             $appId      = 'JvKV4BXK';
     protected SolidityAbi $contractAbi;
@@ -61,7 +61,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
             []
         );
         $this->privatePem = file_get_contents(__DIR__.'/files/certs/test.pem');
-        $this->abiClient = new AbiService($httpClient);
+        $this->abiClient = new ContractService($httpClient);
         $this->pkClient = new PrivateKeyService($httpClient);
         $this->transClient = new TransService($httpClient);
         $this->toolClient = new ToolService($httpClient);

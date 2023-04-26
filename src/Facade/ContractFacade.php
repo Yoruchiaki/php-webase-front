@@ -3,12 +3,12 @@
 namespace Yoruchiaki\WebaseFront\Facade;
 
 use Illuminate\Support\Facades\Facade;
-use Yoruchiaki\WebaseFront\Services\Abi\AbiService;
+use Yoruchiaki\WebaseFront\Services\Abi\ContractService;
 
-class AbiFacade extends Facade
+class ContractFacade extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return AbiService::class;
+        return ContractService::class;
     }
 }

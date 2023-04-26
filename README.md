@@ -36,19 +36,92 @@ $ composer require yoruchiaki/php-webase-front
 - ~~[TransInterface.php](src%2FInterfaces%2FTransInterface.php)~~
 - [Web3Interface.php](src%2FInterfaces%2FWeb3Interface.php)
 
-## Usage
-1. 使用 Composer 命令进行依赖安装
+# 说明
+## 依赖条件
+本项目前置依赖：
+1.已经正确安装并部署了 Webase 的相关服务：Sign 服务，Node 节点。
+2.可以正常访问 Webase 的Node节点前置服务。例如：http://10.0.200.118:5002/WeBASE-Front/#/home
+
+使用本项目可以方便的调用Node前置节点提供的各种服务，可实现的功能与WeBASE-FRONT完全一致，并且使用各种对象封装使接口更加清晰易懂。
+
+> WeBASE-Front是和FISCO-BCOS节点配合使用的一个子系统。此分支支持FISCO-BCOS 2.0以上版本，集成web3sdk，对接口进行了封装，可通过HTTP请求和节点进行通信。另外，具备可视化控制台，可以在控制台上开发智能合约，部署合约和发送交易，并查看交易和区块详情。还可以管理私钥，对节点健康度进行监控和统计。
+>
+
+# 安装
+
+本项目使用 Composer 对依赖项目进行管理
+
+**当前项目处于迭代阶段，使用方法尚不稳定，请自行决定是否使用**
+
+1.执行下面的安装命令
 ```shell
 composer require yoruchiaki/php-webase-front=dev-main
 ```
-使用-vvv可以打印详细参数
-```shell
-composer require yoruchiaki/php-webase-front=dev-main -vvv
+2.【可选】使用Laravel发布配置文件
 ```
-2. 使用 Laravel 进行集成
-> TODO 待补充
-3. 针对 PHP 引用
-> TODO 待补充
-## License
+php artisan vendor:publish --tag="webase-front"
+```
+3.【可选】在Laravel的 config/webase-front.php 中修改 frontUrl或在环境变量中创建
+```env
+WEBASE_FRONT_URL=XXX
+```
 
-MIT
+**安装完毕**
+
+
+#使用
+1. 常规PHP项目使用
+
+```php
+require_once './vendor/autoload.php';
+use  Yoruchiaki\WebaseFront\HttpClient\AppConfig;
+use  Yoruchiaki\WebaseFront\HttpClient\HttpRequest;
+
+$httpClient = new HttpRequest(
+      new AppConfig(
+                "http://10.0.200.118:5002/WeBASE-Front/",
+                5
+      )
+);
+
+$abiClient = new \Yoruchiaki\WebaseFront\Services\Abi\ContractService($httpClient);
+//Abi,Bin,Sol都可以使用相同的方法进行初始化.
+$abi = new \Yoruchiaki\WebaseFront\ValueObjects\SolidityAbi();
+$abi->loadPath('/filePath/demo.abi');// 载入abi文件路径也可以在构造函数中传入文件内容进行初始化
+$bin = new \Yoruchiaki\WebaseFront\ValueObjects\SolidityBin();
+$bin->loadPath('/filePath/demo.bin');// 载入abi文件路径也可以在构造函数中传入文件内容进行初始化
+$sol = new \Yoruchiaki\WebaseFront\ValueObjects\SoliditySol(
+    file_get_contents('/filePath/demo.sol')
+);
+
+$solidity = new \Yoruchiaki\WebaseFront\ValueObjects\Solidity(
+    'demo',
+    $abi,
+    $bin,
+    $sol
+);
+$contractAddress = '0xabcd....';
+$abiClient->abiInfo($solidity,$contractAddress);
+$abiClient->addContractPath('path-folder');
+$abiClient->compileJava($solidity);
+$abiClient->contractCompile('demo',$sol);
+$abiClient->contractList(1,10);
+...
+```
+2.如果你使用Laravel的话则可以直接使用Facade进行调用
+
+```php
+use Yoruchiaki\WebaseFront\Facade\ContractFacade;
+
+ContractFacade::abiInfo($solidity,$contractAddress);
+...
+```
+3.以此类推
+
+```php
+当前版本还有如下方法可以调用
+use Yoruchiaki\WebaseFront\Facade\ContractFacade; //合约
+use Yoruchiaki\WebaseFront\Facade\ToolFacade; //工具
+use Yoruchiaki\WebaseFront\Facade\PrivateKeyFacade; //密钥
+use Yoruchiaki\WebaseFront\Facade\TransFacade; //交易
+```
