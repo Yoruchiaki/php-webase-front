@@ -6,7 +6,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Yoruchiaki\WebaseFront\Interfaces\AbiInterface;
 use Yoruchiaki\WebaseFront\Services\BaseService;
 use Yoruchiaki\WebaseFront\ValueObjects\Solidity;
-use Yoruchiaki\WebaseFront\ValueObjects\SoliditySource;
+use Yoruchiaki\WebaseFront\ValueObjects\SoliditySol;
 
 class AbiService extends BaseService implements AbiInterface
 {
@@ -48,6 +48,7 @@ class AbiService extends BaseService implements AbiInterface
             'signUserId'  => $signUserId,
             'abiInfo'     => $solidity->getSolidityAbi()->toArray(),
             'bytecodeBin' => $solidity->getSolidityBin()->toString(),
+            'funcParam'   => $solidity->getConstructParams()
         ]);
     }
 
@@ -110,7 +111,7 @@ class AbiService extends BaseService implements AbiInterface
                 'contractBin'    => $solidity->getSolidityBin()->toString(),
                 'contractPath'   => $contractPath,
                 'contractAbi'    => $solidity->getSolidityAbi()->toString(),
-                'contractSource' => $solidity->getSoliditySource()->toString()
+                'contractSource' => $solidity->getSoliditySol()->toString()
             ]
         );
     }
@@ -171,12 +172,12 @@ class AbiService extends BaseService implements AbiInterface
 
     /**
      * @param  string  $contractName
-     * @param  SoliditySource  $soliditySource
+     * @param  SoliditySol  $soliditySource
      *
      * @return array
      * @throws GuzzleException
      */
-    public function contractCompile(string $contractName, SoliditySource $soliditySource): array
+    public function contractCompile(string $contractName, SoliditySol $soliditySource): array
     {
         return $this->http->request('POST', "contract/contractCompile", [
             'contractName'   => $contractName,

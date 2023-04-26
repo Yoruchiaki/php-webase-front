@@ -13,21 +13,21 @@ use Yoruchiaki\WebaseFront\Services\Trans\TransService;
 use Yoruchiaki\WebaseFront\ValueObjects\Solidity;
 use Yoruchiaki\WebaseFront\ValueObjects\SolidityAbi;
 use Yoruchiaki\WebaseFront\ValueObjects\SolidityBin;
-use Yoruchiaki\WebaseFront\ValueObjects\SoliditySource;
+use Yoruchiaki\WebaseFront\ValueObjects\SoliditySol;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
     protected AbiService $abiClient;
 
-    protected                $appId      = 'zKiAjweB';
-    protected SolidityAbi    $contractAbi;
-    protected SolidityBin    $contractBin;
-    protected string         $contractName;
-    protected int            $groupId;
-    protected SoliditySource $contractSol;
-    protected Solidity       $solidity;
-    protected string         $privateKey = '8cf98bd0f37fb0984ab43ed6fc2dcdf58811522af7e4a3bedbe84636a79a501c';
-    protected Generator      $faker;
+    protected             $appId      = 'JvKV4BXK';
+    protected SolidityAbi $contractAbi;
+    protected SolidityBin $contractBin;
+    protected string      $contractName;
+    protected int         $groupId;
+    protected SoliditySol $contractSol;
+    protected Solidity    $solidity;
+    protected string      $privateKey = '8cf98bd0f37fb0984ab43ed6fc2dcdf58811522af7e4a3bedbe84636a79a501c';
+    protected Generator   $faker;
     /**
      * @var false|string
      */
@@ -50,9 +50,9 @@ class TestCase extends \PHPUnit\Framework\TestCase
         $this->groupId = 1;
         $this->faker = Factory::create('zh-CN');
         $this->contractName = 'HelloWorld';
-        $this->contractAbi = new SolidityAbi(file_get_contents(__DIR__.'/files/contracts/HelloWorld.abi'));
-        $this->contractBin = new SolidityBin(file_get_contents(__DIR__.'/files/contracts/HelloWorld.bin'));
-        $this->contractSol = new SoliditySource(file_get_contents(__DIR__.'/files/contracts/HelloWorld.sol'));
+        $this->contractAbi = (new SolidityAbi())->loadPath(__DIR__.'/files/contracts/HelloWorld.abi');
+        $this->contractBin = (new SolidityBin())->loadPath(__DIR__.'/files/contracts/HelloWorld.bin');
+        $this->contractSol = (new SoliditySol())->loadPath(__DIR__.'/files/contracts/HelloWorld.sol');
         $this->solidity = new Solidity(
             $this->contractName,
             $this->contractAbi,

@@ -45,7 +45,15 @@ class SolidityAbiTest extends TestCase
 
     public function testCheck()
     {
-        $check_result = $this->abi->check('set');
+        $check_result = $this->abi->checkFunctionName('set');
         $this->assertEquals(true, $check_result);
+    }
+
+    public function testLoad()
+    {
+        $abi = new SolidityAbi();
+        $abi->loadPath(__DIR__.'/../files/contracts/HelloWorld.abi');
+        $this->assertEquals('[{"constant":false,"inputs":[{"name":"n","type":"string"}],"name":"set","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"get","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]',
+            $abi->toString());
     }
 }

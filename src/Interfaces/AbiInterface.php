@@ -4,7 +4,7 @@ namespace Yoruchiaki\WebaseFront\Interfaces;
 
 use Yoruchiaki\WebaseFront\ValueObjects\Solidity;
 use Yoruchiaki\WebaseFront\ValueObjects\SolidityAbi;
-use Yoruchiaki\WebaseFront\ValueObjects\SoliditySource;
+use Yoruchiaki\WebaseFront\ValueObjects\SoliditySol;
 use Yoruchiaki\WebaseFront\ValueObjects\SolidityBin;
 use Yoruchiaki\WebaseFront\ValueObjects\TransObject;
 
@@ -53,7 +53,7 @@ interface AbiInterface
 
     public function ifChanged(int $contractId): array;
 
-    public function contractCompile(string $contractName, SoliditySource $soliditySource): array;
+    public function contractCompile(string $contractName, SoliditySol $soliditySource): array;
 
     public function multiContractCompile(string $contractZipBase64): array;
 

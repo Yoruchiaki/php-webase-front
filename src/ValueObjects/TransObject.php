@@ -4,8 +4,10 @@ namespace Yoruchiaki\WebaseFront\ValueObjects;
 
 use Yoruchiaki\WebaseFront\Exceptions\NoValidContractAddressException;
 use Yoruchiaki\WebaseFront\Exceptions\NoValidContractFunctionNameException;
+use Yoruchiaki\WebaseFront\Interfaces\SolidityAbiInterface;
+use Yoruchiaki\WebaseFront\Interfaces\TransObjectInterface;
 
-class TransObject
+class TransObject implements TransObjectInterface
 {
     private string      $contractAddress;
     private string      $funName;
@@ -20,9 +22,9 @@ class TransObject
     public function __construct(
         string $contractAddress = '0x0',
         string $contractName = null,
-        SolidityAbi $contractAbi = null,
+        SolidityAbiInterface $contractAbi = null,
         string $funName = '',
-        array $funParams = []
+        $funParams = []
     ) {
         $this->contractName = $contractName;
         $this->contractAddress = $contractAddress;
@@ -32,7 +34,7 @@ class TransObject
         if (!str_starts_with($contractAddress, '0x')) {
             throw new NoValidContractAddressException();
         }
-        if (!$this->contractAbi->check($funName)) {
+        if (!$this->contractAbi->checkFunctionName($funName)) {
             throw new NoValidContractFunctionNameException();
         };
     }
@@ -112,7 +114,7 @@ class TransObject
     /**
      * @param  SolidityAbi  $contractAbi
      */
-    public function setContractAbi(SolidityAbi $contractAbi): void
+    public function setContractAbi(SolidityAbiInterface $contractAbi): void
     {
         $this->contractAbi = $contractAbi;
     }

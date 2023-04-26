@@ -3,6 +3,7 @@
 namespace Yoruchiaki\WebaseFront\Tests\Feature;
 
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Str;
 use Yoruchiaki\WebaseFront\Tests\TestCase;
 
 class AbiServiceTest extends TestCase
@@ -30,11 +31,19 @@ class AbiServiceTest extends TestCase
      */
     public function deployWithSign()
     {
+        ['signUserId' => $signUserId] = $this->pkClient->create(
+            'admin',
+            str_replace('-', '', $this->faker->uuid()),
+            2,
+            $this->appId,
+            true
+        );
         $res = $this->abiClient->deployWithSign(
-            'bb086417c71147a0be1a9a7429079676',
+            $signUserId,
             $this->solidity
         );
-        $this->assertIsArray($res);
+        $this->assertAllResponseKey(['result'], $res);
+        $this->assertNotEquals('0x0000000000000000000000000000000000000000', $res['result']);
     }
 
     /**
@@ -223,8 +232,15 @@ class AbiServiceTest extends TestCase
      */
     public function registerCns()
     {
+        ['signUserId' => $signUserId] = $this->pkClient->create(
+            $this->faker->userName,
+            str_replace('-', '', $this->faker->uuid()),
+            2,
+            $this->appId,
+            false
+        );
         ['result' => $contractAddress] = $this->abiClient->deployWithSign(
-            'debdea4753f7400db049f8268587abb4',
+            $signUserId,
             $this->solidity
         );
         $res = $this->abiClient->registerCns(
@@ -232,7 +248,7 @@ class AbiServiceTest extends TestCase
             $contractAddress,
             $this->faker->uuid(),
             'v1.0.0',
-            'debdea4753f7400db049f8268587abb4'
+            $signUserId
         );
         $this->assertAllResponseKey([
             "code"    => 0,
@@ -246,8 +262,15 @@ class AbiServiceTest extends TestCase
      */
     public function findCns()
     {
+        ['signUserId' => $signUserId] = $this->pkClient->create(
+            $this->faker->userName,
+            str_replace('-', '', $this->faker->uuid()),
+            2,
+            $this->appId,
+            false
+        );
         ['result' => $contractAddress] = $this->abiClient->deployWithSign(
-            'debdea4753f7400db049f8268587abb4',
+            $signUserId,
             $this->solidity
         );
         $this->abiClient->registerCns(
@@ -255,7 +278,7 @@ class AbiServiceTest extends TestCase
             $contractAddress,
             $this->faker->uuid(),
             'v1.0.0',
-            'debdea4753f7400db049f8268587abb4'
+            $signUserId
         );
         $res = $this->abiClient->findCns($contractAddress);
         $this->assertAllResponseKey([
@@ -264,6 +287,4 @@ class AbiServiceTest extends TestCase
             'data'
         ], $res);
     }
-
-
 }
