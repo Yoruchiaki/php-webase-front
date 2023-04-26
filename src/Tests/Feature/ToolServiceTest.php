@@ -6,13 +6,21 @@ use GuzzleHttp\Exception\GuzzleException;
 use Yoruchiaki\WebaseFront\Tests\TestCase;
 use Yoruchiaki\WebaseFront\ValueObjects\SolidityAbi;
 
-class
-ToolServiceTest extends TestCase
+class ToolServiceTest extends TestCase
 {
 
+    /**
+     * @return void
+     * @throws GuzzleException
+     */
     public function SignMsg()
     {
-        $res = $this->toolClient->signMsg($this->privateKey, json_encode(['发生什么事了']));
+        ['privateKey' => $privateKey] = $this->toolClient->keypair();
+        $res = $this->toolClient->signMsg(
+            '7de55cd04600d4059f10d2d5908e94b89a3ad577151ba539a28cb8ccb1fe3b73',
+            "0xcfadfa0000000000000000000000000000000000000000000000000000000000"
+        );
+        var_dump($res);
     }
 
     /**

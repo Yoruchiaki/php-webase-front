@@ -153,7 +153,7 @@ class PrivateKeyService extends BaseService implements PrivateKeyInterface
      * @return array
      * @throws GuzzleException
      */
-    public function userInfoWithSign(string $signUserId, bool $returnPrivateKey): array
+    public function userInfoWithSign(string $signUserId, bool $returnPrivateKey = false): array
     {
         return $this->http->request('GET', 'privateKey/userInfoWithSign', [
             'signUserId'       => $signUserId,

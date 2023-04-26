@@ -29,5 +29,5 @@ interface PrivateKeyInterface
 
     public function exportP12(string $signUserId = null, string $userAddress = null): array;
 
-    public function userInfoWithSign(string $signUserId, bool $returnPrivateKey): array;
+    public function userInfoWithSign(string $signUserId, bool $returnPrivateKey = false): array;
 }

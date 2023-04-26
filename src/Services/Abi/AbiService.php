@@ -3,170 +3,130 @@
 namespace Yoruchiaki\WebaseFront\Services\Abi;
 
 use GuzzleHttp\Exception\GuzzleException;
-use Yoruchiaki\WebaseFront\HttpClient\HttpRequest;
 use Yoruchiaki\WebaseFront\Interfaces\AbiInterface;
 use Yoruchiaki\WebaseFront\Services\BaseService;
-use Yoruchiaki\WebaseFront\ValueObjects\SolidityAbi;
+use Yoruchiaki\WebaseFront\ValueObjects\Solidity;
 use Yoruchiaki\WebaseFront\ValueObjects\SoliditySource;
-use Yoruchiaki\WebaseFront\ValueObjects\SolidityBin;
 
 class AbiService extends BaseService implements AbiInterface
 {
     /**
-     * @param  int  $groupId
-     * @param  string  $contractName
-     * @param  string  $address
-     * @param  array  $abiInfo
-     * @param  string  $contractBin
+     * @param  Solidity  $solidity  合约对象
+     * @param  string  $contractAddress  合约地址
      *
      * @return array
      * @throws GuzzleException
      */
     public function abiInfo(
-        int $groupId,
-        string $contractName,
-        string $address,
-        array $abiInfo,
-        SolidityBin $contractBin
+        Solidity $solidity,
+        string $contractAddress
     ): array {
         return $this->http->request('POST', 'contract/abiInfo', [
-            'groupId'      => $groupId,
-            'contractName' => $contractName,
-            'address'      => $address,
-            'contractBin'  => $contractBin,
-            'abiInfo'      => $abiInfo
+            'groupId'      => $this->groupId,
+            'contractName' => $solidity->getContractName(),
+            'address'      => $contractAddress,
+            'contractBin'  => $solidity->getSolidityBin(),
+            'abiInfo'      => $solidity->getSolidityAbi()->toArray()
         ]);
     }
 
     /**
-     * @param  int  $groupId
      * @param  string  $signUserId
-     * @param  array  $abiInfo
-     * @param  string  $contractBin
-     * @param  string|null  $contractName
-     * @param  array|null  $funcParam
+     * @param  Solidity  $solidity
      * @param  string|null  $version
      *
      * @return array
      * @throws GuzzleException
      */
     public function deployWithSign(
-        int $groupId,
         string $signUserId,
-        SolidityAbi $abiInfo,
-        SolidityBin $contractBin,
-        string $contractName = null,
-        array $funcParam = [],
+        Solidity $solidity,
         string $version = null
     ): array {
         return $this->http->request('POST', 'contract/deployWithSign', [
-            'groupId'     => $groupId,
+            'groupId'     => $this->groupId,
             'signUserId'  => $signUserId,
-            'abiInfo'     => $abiInfo->toArray(),
-            'bytecodeBin' => (string) $contractBin,
-            'funcParam'   => $funcParam
+            'abiInfo'     => $solidity->getSolidityAbi()->toArray(),
+            'bytecodeBin' => $solidity->getSolidityBin()->toString(),
         ]);
     }
 
     /**
-     * @param  int  $groupId
      * @param  string  $user
-     * @param  array  $abiInfo
-     * @param  string  $bytecodeBin
-     * @param  string|null  $contractName
-     * @param  array|null  $funcParam
+     * @param  Solidity  $solidity
      *
      * @return array
      * @throws GuzzleException
      */
     public function deploy(
-        int $groupId,
         string $user,
-        array $abiInfo,
-        SolidityBin $bytecodeBin,
-        string $contractName = null,
-        array $funcParam = null
+        Solidity $solidity
     ): array {
         return $this->http->request('POST', 'contract/deploy', [
-            'groupId'      => $groupId,
+            'groupId'      => $this->groupId,
             'user'         => $user,
-            'contractName' => $contractName,
-            'abiInfo'      => $abiInfo,
-            'bytecodeBin'  => (string) $bytecodeBin,
-            'funcParam'    => $funcParam,
+            'contractName' => $solidity->getContractName(),
+            'abiInfo'      => $solidity->getSolidityAbi()->toArray(),
+            'bytecodeBin'  => $solidity->getSolidityBin()
         ]);
     }
 
     /**
-     * @param  string  $contractName
-     * @param  array  $abiInfo
-     * @param  string  $contractBin
+     * @param  Solidity  $solidity
      * @param  string  $packageName
      *
      * @return array
      * @throws GuzzleException
      */
     public function compileJava(
-        string $contractName,
-        array $abiInfo,
-        string $contractBin,
+        Solidity $solidity,
         string $packageName
     ): array {
         return $this->http->request('POST', 'contract/compile-java',
-            compact(
-                'contractBin',
-                'contractName',
-                'abiInfo',
-                'packageName')
-        );
-    }
-
-    /**
-     * @param  int  $groupId
-     * @param  string  $contractName
-     * @param  string  $contractPath
-     * @param  SoliditySource  $contractSource
-     *
-     * @param  SolidityAbi  $contractAbi
-     * @param  SolidityBin  $bytecodeBin
-     *
-     * @return array
-     * @throws GuzzleException
-     */
-    public function save(
-        int $groupId,
-        string $contractName,
-        string $contractPath,
-        SoliditySource $contractSource,
-        SolidityAbi $contractAbi,
-        SolidityBin $contractBin
-    ): array {
-        return $this->http->request('POST', 'contract/save',
             [
-                'groupId'        => $groupId,
-                'contractName'   => $contractName,
-                'contractBin'    => (string) $contractBin,
-                'contractPath'   => $contractPath,
-                'contractAbi'    => (string) $contractAbi,
-                'contractSource' => (string) $contractSource
+                'contractBin'  => $solidity->getSolidityBin()->toString(),
+                'contractName' => $solidity->getContractName(),
+                'abiInfo'      => $solidity->getSolidityAbi()->toArray(),
+                'packageName'  => $packageName
             ]
         );
     }
 
     /**
-     * @param  int  $groupId
+     * @param  Solidity  $solidity
+     * @param  string  $contractPath
+     *
+     * @return array
+     * @throws GuzzleException
+     */
+    public function save(
+        Solidity $solidity,
+        string $contractPath
+    ): array {
+        return $this->http->request('POST', 'contract/save',
+            [
+                'groupId'        => $this->groupId,
+                'contractName'   => $solidity->getContractName(),
+                'contractBin'    => $solidity->getSolidityBin()->toString(),
+                'contractPath'   => $contractPath,
+                'contractAbi'    => $solidity->getSolidityAbi()->toString(),
+                'contractSource' => $solidity->getSoliditySource()->toString()
+            ]
+        );
+    }
+
+    /**
      * @param  int  $contractId
      *
      * @return array
      * @throws GuzzleException
      */
-    public function deleteContract(int $groupId, int $contractId): array
+    public function deleteContract(int $contractId): array
     {
-        return $this->http->request('DELETE', "contract/$groupId/$contractId");
+        return $this->http->request('DELETE', "contract/$this->groupId/$contractId");
     }
 
     /**
-     * @param  int  $groupId
      * @param  int  $pageNumber
      * @param  int  $pageSize
      * @param  string|null  $contractName
@@ -178,9 +138,8 @@ class AbiService extends BaseService implements AbiInterface
      * @throws GuzzleException
      */
     public function contractList(
-        int $groupId,
-        int $pageNumber,
-        int $pageSize,
+        int $pageNumber = 1,
+        int $pageSize = 10,
         string $contractName = null,
         int $contractStatus = null,
         string $contractAddress = null,
@@ -188,7 +147,7 @@ class AbiService extends BaseService implements AbiInterface
     ): array {
         return $this->http->request('POST', 'contract/contractList',
             [
-                'groupId'         => $groupId,
+                'groupId'         => $this->groupId,
                 'pageNumber'      => $pageNumber,
                 'pageSize'        => $pageSize,
                 'contractName'    => $contractName,
@@ -200,29 +159,28 @@ class AbiService extends BaseService implements AbiInterface
     }
 
     /**
-     * @param  int  $groupId
      * @param  int  $contractId
      *
      * @return array
      * @throws GuzzleException
      */
-    public function ifChanged(int $groupId, int $contractId): array
+    public function ifChanged(int $contractId): array
     {
-        return $this->http->request('GET', "contract/ifChanged/$groupId/$contractId");
+        return $this->http->request('GET', "contract/ifChanged/$this->groupId/$contractId");
     }
 
     /**
      * @param  string  $contractName
-     * @param  string  $solidityBase64
+     * @param  SoliditySource  $soliditySource
      *
      * @return array
      * @throws GuzzleException
      */
-    public function contractCompile(string $contractName, SoliditySource $solidityBase64): array
+    public function contractCompile(string $contractName, SoliditySource $soliditySource): array
     {
         return $this->http->request('POST', "contract/contractCompile", [
             'contractName'   => $contractName,
-            'solidityBase64' => (string) $solidityBase64
+            'solidityBase64' => $soliditySource->toString()
         ]);
     }
 
@@ -240,18 +198,17 @@ class AbiService extends BaseService implements AbiInterface
     }
 
     /**
-     * @param  int  $groupId
      * @param  int  $contractStatus
      *
      * @return array
      * @throws GuzzleException
      */
-    public function contractListFull(int $groupId, int $contractStatus): array
+    public function contractListFull(int $contractStatus): array
     {
         return $this->http->request('get',
             "contract/contractList/all/light",
             [
-                'groupId'        => $groupId,
+                'groupId'        => $this->groupId,
                 'contractStatus' => $contractStatus
             ]
         );
@@ -269,86 +226,74 @@ class AbiService extends BaseService implements AbiInterface
     }
 
     /**
-     * @param  int  $groupId
-     *
      * @return array
      * @throws GuzzleException
      */
-    public function findContractPathList(int $groupId): array
+    public function findContractPathList(): array
     {
-        return $this->http->request('GET', "contract/findPathList/$groupId");
+        return $this->http->request('GET', "contract/findPathList/$this->groupId");
     }
 
     /**
-     * @param  int  $groupId
      * @param  string  $contractPath
      *
      * @return array
      * @throws GuzzleException
      */
-    public function addContractPath(int $groupId, string $contractPath): array
+    public function addContractPath(string $contractPath): array
     {
         return $this->http->request('POST', "contract/addContractPath", [
-            'groupId'      => $groupId,
+            'groupId'      => $this->groupId,
             'contractPath' => $contractPath
         ]);
     }
 
     /**
-     * @param  int  $groupId
      * @param  string  $contractPath
      *
      * @return array
      * @throws GuzzleException
      */
-    public function deleteContractPath(int $groupId, string $contractPath): array
+    public function deleteContractPath(string $contractPath): array
     {
-        return $this->http->request('DELETE', "contract/deletePath/$groupId/$contractPath");
+        return $this->http->request('DELETE', "contract/deletePath/$this->groupId/$contractPath");
     }
 
     /**
-     * @param  int  $groupId
      * @param  string  $contractPath
      *
      * @return array
      * @throws GuzzleException
      */
-    public function deleteContractByPath(int $groupId, string $contractPath): array
+    public function deleteContractByPath(string $contractPath): array
     {
-        return $this->http->request('DELETE', "contract/batch/$groupId/$contractPath");
+        return $this->http->request('DELETE', "contract/batch/$this->groupId/$contractPath");
     }
 
     /**
-     * @param  int  $groupId
-     * @param  string  $contractName
-     * @param  string  $cnsName
+     * @param  Solidity  $solidity
      * @param  string  $contractAddress
-     * @param  string  $abiInfo
+     * @param  string  $cnsName
      * @param  string  $version
-     * @param  bool  $saveEnabled
-     * @param $userAddress
-     * @param $contractPath
-     * @param $signUserId
+     * @param  string  $signUserId
      *
      * @return array
      * @throws GuzzleException
      */
     public function registerCns(
-        int $groupId,
-        string $contractName,
-        string $cnsName,
+        Solidity $solidity,
         string $contractAddress,
-        SolidityAbi $abiInfo,
+        string $cnsName,
         string $version,
         string $signUserId
     ): array {
         return $this->http->request('POST', "contract/registerCns",
             [
-                'groupId'         => $groupId,
-                'contractName'    => $contractName,
+                'groupId'         => $this->groupId,
+                'contractName'    => $solidity->getContractName(),
                 'cnsName'         => $cnsName,
                 'contractAddress' => $contractAddress,
-                'abiInfo'         => $abiInfo->toArray(),
+                'abiInfo'         => $solidity->getSolidityAbi()->toArray(),
                 'version'         => $version,
                 'saveEnabled'     => false,
                 'signUserId'      => $signUserId
@@ -357,16 +302,15 @@ class AbiService extends BaseService implements AbiInterface
     }
 
     /**
-     * @param  int  $groupId
      * @param  string  $contractAddress
      *
      * @return array
      * @throws GuzzleException
      */
-    public function findCns(int $groupId, string $contractAddress): array
+    public function findCns(string $contractAddress): array
     {
         return $this->http->request('POST', 'contract/findCns', [
-            'groupId'         => $groupId,
+            'groupId'         => $this->groupId,
             'contractAddress' => $contractAddress
         ]);
     }

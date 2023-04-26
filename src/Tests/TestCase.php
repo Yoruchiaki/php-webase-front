@@ -10,6 +10,7 @@ use Yoruchiaki\WebaseFront\Services\Abi\AbiService;
 use Yoruchiaki\WebaseFront\Services\PrivateKey\PrivateKeyService;
 use Yoruchiaki\WebaseFront\Services\Tool\ToolService;
 use Yoruchiaki\WebaseFront\Services\Trans\TransService;
+use Yoruchiaki\WebaseFront\ValueObjects\Solidity;
 use Yoruchiaki\WebaseFront\ValueObjects\SolidityAbi;
 use Yoruchiaki\WebaseFront\ValueObjects\SolidityBin;
 use Yoruchiaki\WebaseFront\ValueObjects\SoliditySource;
@@ -18,15 +19,15 @@ class TestCase extends \PHPUnit\Framework\TestCase
 {
     protected AbiService $abiClient;
 
-    protected                $appId = 'zKiAjweB';
+    protected                $appId      = 'zKiAjweB';
     protected SolidityAbi    $contractAbi;
     protected SolidityBin    $contractBin;
     protected string         $contractName;
     protected int            $groupId;
-    protected SoliditySource $contractSolidity;
-
-    protected string    $privateKey = '8cf98bd0f37fb0984ab43ed6fc2dcdf58811522af7e4a3bedbe84636a79a501c';
-    protected Generator $faker;
+    protected SoliditySource $contractSol;
+    protected Solidity       $solidity;
+    protected string         $privateKey = '8cf98bd0f37fb0984ab43ed6fc2dcdf58811522af7e4a3bedbe84636a79a501c';
+    protected Generator      $faker;
     /**
      * @var false|string
      */
@@ -51,7 +52,14 @@ class TestCase extends \PHPUnit\Framework\TestCase
         $this->contractName = 'HelloWorld';
         $this->contractAbi = new SolidityAbi(file_get_contents(__DIR__.'/files/contracts/HelloWorld.abi'));
         $this->contractBin = new SolidityBin(file_get_contents(__DIR__.'/files/contracts/HelloWorld.bin'));
-        $this->contractSolidity = new SoliditySource(file_get_contents(__DIR__.'/files/contracts/HelloWorld.sol'));
+        $this->contractSol = new SoliditySource(file_get_contents(__DIR__.'/files/contracts/HelloWorld.sol'));
+        $this->solidity = new Solidity(
+            $this->contractName,
+            $this->contractAbi,
+            $this->contractBin,
+            $this->contractSol,
+            []
+        );
         $this->privatePem = file_get_contents(__DIR__.'/files/certs/test.pem');
         $this->abiClient = new AbiService($httpClient);
         $this->pkClient = new PrivateKeyService($httpClient);

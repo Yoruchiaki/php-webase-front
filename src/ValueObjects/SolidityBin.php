@@ -2,7 +2,6 @@
 
 namespace Yoruchiaki\WebaseFront\ValueObjects;
 
-use Illuminate\Support\Str;
 
 class SolidityBin
 {
@@ -14,6 +13,11 @@ class SolidityBin
     }
 
     public function __toString(): string
+    {
+        return $this->solidity_bin;
+    }
+
+    public function toString(): string
     {
         return $this->solidity_bin;
     }

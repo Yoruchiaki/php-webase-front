@@ -4,7 +4,10 @@ namespace Yoruchiaki\WebaseFront\Tests\Feature;
 
 
 use GuzzleHttp\Exception\GuzzleException;
+use Yoruchiaki\WebaseFront\Exceptions\NoValidContractAddressException;
+use Yoruchiaki\WebaseFront\Exceptions\NoValidContractFunctionNameException;
 use Yoruchiaki\WebaseFront\Tests\TestCase;
+use Yoruchiaki\WebaseFront\ValueObjects\TransObject;
 
 class TransServiceTest extends TestCase
 {
@@ -16,6 +19,8 @@ class TransServiceTest extends TestCase
     /**
      * @test
      * @throws GuzzleException
+     * @throws NoValidContractAddressException
+     * @throws NoValidContractFunctionNameException
      */
     public function SignMessageHash()
     {
@@ -25,22 +30,21 @@ class TransServiceTest extends TestCase
         ['signUserId' => $signUserId] = $res;
         $this->assertAllResponseKey(['signUserId'], $res);
         $res = $this->abiClient->deployWithSign(
-            1,
             $signUserId,
-            $this->contractAbi,
-            $this->contractBin,
-            $this->contractName
+            $this->solidity
         );
         ['result' => $address] = $res;
         $this->assertAllResponseKey(['result'], $res);
         $text = $this->faker->text(100);
         $res = $this->transClient->convertRawTxStrWithSign(
             $signUserId,
-            $this->contractName,
-            $address,
-            'set',
-            $this->contractAbi,
-            [$text],
+            new TransObject(
+                $address,
+                $this->contractName,
+                $this->contractAbi,
+                'set',
+                [$text]
+            )
         );
         $this->assertAllResponseKey(['result'], $res);
     }
@@ -59,22 +63,21 @@ class TransServiceTest extends TestCase
         $res = $this->pkClient->import(base64_decode($privateKey), $userName);
         $this->assertAllResponseKey(['address', 'publicKey', 'privateKey', 'userName', 'type'], $res);
         $res = $this->abiClient->deployWithSign(
-            1,
             $signUserId,
-            $this->contractAbi,
-            $this->contractBin,
-            $this->contractName
+            $this->solidity
         );
         ['result' => $contractAddress] = $res;
         $this->assertAllResponseKey(['result'], $res);
         $text = $this->faker->text(100);
         $res = $this->transClient->convertRawTxStrWithLocal(
             $userAddress,
-            $this->contractName,
-            $contractAddress,
-            'set',
-            $this->contractAbi,
-            [$text]
+            new TransObject(
+                $contractAddress,
+                $this->contractName,
+                $this->contractAbi,
+                'set',
+                [$text]
+            )
         );
         $this->assertAllResponseKey(['result'], $res);
     }
@@ -91,22 +94,20 @@ class TransServiceTest extends TestCase
         $res = $this->pkClient->create($userName, $signUserId, 2, $this->appId, false);
         ['signUserId' => $signUserId] = $res;
         $res = $this->abiClient->deployWithSign(
-            1,
             $signUserId,
-            $this->contractAbi,
-            $this->contractBin,
-            $this->contractName
+            $this->solidity
         );
-        ['result' => $address] = $res;
+        ['result' => $contractAddress] = $res;
         $text = $this->faker->text(100);
         $res = $this->transClient->handleWithSign(
             $signUserId,
-            1,
-            $this->contractName,
-            $address,
-            'set',
-            $this->contractAbi,
-            [$text]
+            new TransObject(
+                $contractAddress,
+                $this->contractName,
+                $this->contractAbi,
+                'set',
+                [$text]
+            )
         );
         $this->assertAllResponseKey([
             'transactionHash',
@@ -144,22 +145,21 @@ class TransServiceTest extends TestCase
         ['signUserId' => $signUserId] = $res;
         $this->assertAllResponseKey(['signUserId'], $res);
         $res = $this->abiClient->deployWithSign(
-            1,
             $signUserId,
-            $this->contractAbi,
-            $this->contractBin,
-            $this->contractName
+            $this->solidity
         );
-        ['result' => $address] = $res;
+        ['result' => $contractAddress] = $res;
         $this->assertAllResponseKey(['result'], $res);
         $text = $this->faker->text(100);
         $res = $this->transClient->convertRawTxStrWithSign(
             $signUserId,
-            $this->contractName,
-            $address,
-            'set',
-            $this->contractAbi,
-            [$text],
+            new TransObject(
+                $contractAddress,
+                $this->contractName,
+                $this->contractAbi,
+                'set',
+                [$text]
+            )
         );
         $this->assertAllResponseKey(['result'], $res);
         ['result' => $signedStr] = $res;
@@ -201,22 +201,21 @@ class TransServiceTest extends TestCase
         $res = $this->pkClient->import(base64_decode($privateKey), $userName);
         $this->assertAllResponseKey(['address', 'publicKey', 'privateKey', 'userName', 'type'], $res);
         $res = $this->abiClient->deployWithSign(
-            1,
             $signUserId,
-            $this->contractAbi,
-            $this->contractBin,
-            $this->contractName
+            $this->solidity
         );
         ['result' => $contractAddress] = $res;
         $this->assertAllResponseKey(['result'], $res);
         $text = $this->faker->text(100);
         $res = $this->transClient->handle(
             $userAddress,
-            $this->contractName,
-            $contractAddress,
-            'set',
-            $this->contractAbi,
-            [$text]
+            new TransObject(
+                $contractAddress,
+                $this->contractName,
+                $this->contractAbi,
+                'set',
+                [$text]
+            )
         );
         $this->assertAllResponseKey([
             'transactionHash',
@@ -253,21 +252,20 @@ class TransServiceTest extends TestCase
         $res = $this->pkClient->create($userName, $signUserId, 2, $this->appId, true);
         ['signUserId' => $signUserId] = $res;
         $res = $this->abiClient->deployWithSign(
-            1,
             $signUserId,
-            $this->contractAbi,
-            $this->contractBin,
-            $this->contractName
+            $this->solidity
         );
         ['result' => $contractAddress] = $res;
         $text = $this->faker->text(100);
         $res = $this->transClient->convertRawTxStrWithSign(
             $signUserId,
-            $this->contractName,
-            $contractAddress,
-            'set',
-            $this->contractAbi,
-            [$text]
+            new TransObject(
+                $contractAddress,
+                $this->contractName,
+                $this->contractAbi,
+                'set',
+                [$text]
+            )
         );
         $this->assertAllResponseKey(['result'], $res);
     }
@@ -284,25 +282,30 @@ class TransServiceTest extends TestCase
         $res = $this->pkClient->create($userName, $signUserId, 2, $this->appId, true);
         ['signUserId' => $signUserId] = $res;
         $res = $this->abiClient->deployWithSign(
-            1,
             $signUserId,
-            $this->contractAbi,
-            $this->contractBin,
-            $this->contractName
+            $this->solidity
         );
         ['result' => $contractAddress] = $res;
         $text = $this->faker->text(100);
         $res = $this->transClient->convertRawTxStrWithSign(
             $signUserId,
-            $this->contractName,
-            $contractAddress,
-            'set',
-            $this->contractAbi,
-            [$text]
+            new TransObject(
+                $contractAddress,
+                $this->contractName,
+                $this->contractAbi,
+                'set',
+                [$text]
+            )
         );
         $this->assertAllResponseKey(['result'], $res);
         ['result' => $signedStr] = $res;
-        $res = $this->transClient->queryTransaction($signedStr, $contractAddress, 1, 'set', $this->contractAbi);
+        $res = $this->transClient->queryTransaction($signedStr, new TransObject(
+            $contractAddress,
+            $this->contractName,
+            $this->contractAbi,
+            'set',
+            [$text]
+        ));
         $this->assertAllResponseKey([], $res);
     }
 
@@ -314,7 +317,13 @@ class TransServiceTest extends TestCase
     public function EncodeFunction()
     {
         $text = $this->faker->text();
-        $res = $this->transClient->encodeFunction('set', $this->contractAbi, [$text]);
+        $res = $this->transClient->encodeFunction(new TransObject(
+            '0x0',
+            $this->contractName,
+            $this->contractAbi,
+            'set',
+            [$text]
+        ));
         $this->assertAllResponseKey(['result'], $res);
     }
 }

@@ -19,7 +19,7 @@ class AbiServiceTest extends TestCase
      */
     public function contractList()
     {
-        $obj = $this->abiClient->contractList($this->groupId, 1, 10);
+        $obj = $this->abiClient->contractList(1, 10);
         $this->assertAllResponseKey(['code', 'message', 'data', 'totalCount'], $obj);
     }
 
@@ -31,10 +31,8 @@ class AbiServiceTest extends TestCase
     public function deployWithSign()
     {
         $res = $this->abiClient->deployWithSign(
-            $this->groupId,
             'bb086417c71147a0be1a9a7429079676',
-            $this->contractAbi,
-            $this->contractBin,
+            $this->solidity
         );
         $this->assertIsArray($res);
     }
@@ -46,8 +44,7 @@ class AbiServiceTest extends TestCase
      */
     public function compileJava()
     {
-        $res = $this->abiClient->compileJava($this->contractName, json_decode($this->contractAbi, true), $this->contractBin,
-            'com.test.package_name');
+        $res = $this->abiClient->compileJava($this->solidity, 'com.test.package_name');
         $this->assertAllResponseKey(['result'], $res);
         $this->assertStringContainsString("com.test.package_name", $res['result']);
     }
@@ -60,16 +57,11 @@ class AbiServiceTest extends TestCase
     public function save()
     {
         ['contractPath' => $contractPath] = $this->abiClient->addContractPath(
-            $this->groupId,
             time()
         );
         $res = $this->abiClient->save(
-            $this->groupId,
-            $this->contractName,
-            $contractPath,
-            $this->contractSolidity,
-            $this->contractAbi,
-            $this->contractBin
+            $this->solidity,
+            $contractPath
         );
         $this->assertAllResponseKey([
             'id',
@@ -97,18 +89,14 @@ class AbiServiceTest extends TestCase
      */
     public function deleteContract()
     {
-        ['contractPath' => $contractPath] = $this->abiClient->addContractPath($this->groupId, $this->faker->uuid());
+        ['contractPath' => $contractPath] = $this->abiClient->addContractPath($this->faker->uuid());
 
         $save_res = $this->abiClient->save(
-            $this->groupId,
-            $this->contractName,
+            $this->solidity,
             $contractPath,
-            $this->contractSolidity,
-            $this->contractAbi,
-            $this->contractBin
         );
 
-        $delete_res = $this->abiClient->deleteContract($this->groupId, $save_res['id']);
+        $delete_res = $this->abiClient->deleteContract($save_res['id']);
         $this->assertIsArray($delete_res);
         $this->assertAllResponseKey(['code', 'message', 'data'], $delete_res);
         $this->assertEquals($delete_res['code'], 0);
@@ -123,16 +111,12 @@ class AbiServiceTest extends TestCase
      */
     public function ifChanged()
     {
-        ['contractPath' => $contractPath] = $this->abiClient->addContractPath($this->groupId, $this->faker->uuid());
+        ['contractPath' => $contractPath] = $this->abiClient->addContractPath($this->faker->uuid());
         $save_res = $this->abiClient->save(
-            $this->groupId,
-            $this->contractName,
+            $this->solidity,
             $contractPath,
-            $this->contractSolidity,
-            $this->contractAbi,
-            $this->contractBin
         );
-        $res = $this->abiClient->ifChanged($this->groupId, $save_res['id']);
+        $res = $this->abiClient->ifChanged($save_res['id']);
         $this->assertIsArray($res);
         $this->assertAllResponseKey(['result'], $res);
     }
@@ -145,7 +129,7 @@ class AbiServiceTest extends TestCase
      */
     public function contractCompile()
     {
-        $res = $this->abiClient->contractCompile($this->contractName, $this->contractSolidity);
+        $res = $this->abiClient->contractCompile($this->contractName, $this->contractSol);
         $this->assertIsArray($res);
         $this->assertAllResponseKey(['contractName', 'contractAbi', 'bytecodeBin', 'errors'], $res);
         $this->assertEquals($res['errors'], '');
@@ -153,7 +137,7 @@ class AbiServiceTest extends TestCase
 
     public function contractListFull()
     {
-        $res = $this->abiClient->contractListFull($this->groupId, 1);
+        $res = $this->abiClient->contractListFull(1);
         $this->assertIsArray($res);
         $this->assertAllResponseKey(['code' => 0, 'message', 'data', 'totalCount'], $res);
     }
@@ -165,7 +149,7 @@ class AbiServiceTest extends TestCase
      */
     public function findOne()
     {
-        $res = $this->abiClient->contractListFull($this->groupId, 1);
+        $res = $this->abiClient->contractListFull(1);
         $res = $this->abiClient->findOne($res['data'][0]['id']);
         $this->assertAllResponseKey([
             'code'    => 0,
@@ -193,7 +177,7 @@ class AbiServiceTest extends TestCase
      */
     public function addContractPath()
     {
-        $res = $this->abiClient->addContractPath($this->groupId, $this->faker->uuid());
+        $res = $this->abiClient->addContractPath($this->faker->uuid());
         $this->assertAllResponseKey([
             'groupId' => 1,
             'contractPath',
@@ -209,8 +193,8 @@ class AbiServiceTest extends TestCase
      */
     public function deleteContractPath()
     {
-        ['contractPath' => $contractPath] = $this->abiClient->addContractPath($this->groupId, $this->faker->uuid());
-        $res = $this->abiClient->deleteContractPath($this->groupId, $contractPath);
+        ['contractPath' => $contractPath] = $this->abiClient->addContractPath($this->faker->uuid());
+        $res = $this->abiClient->deleteContractPath($contractPath);
         $this->assertAllResponseKey([
             'code'    => 0,
             'message' => 'success'
@@ -224,8 +208,8 @@ class AbiServiceTest extends TestCase
      */
     public function deleteContractByPath()
     {
-        ['contractPath' => $contractPath] = $this->abiClient->addContractPath($this->groupId, $this->faker->uuid());
-        $res = $this->abiClient->deleteContractByPath($this->groupId, $contractPath);
+        ['contractPath' => $contractPath] = $this->abiClient->addContractPath($this->faker->uuid());
+        $res = $this->abiClient->deleteContractByPath($contractPath);
         $this->assertAllResponseKey([
             'code'    => 0,
             'message' => 'success'
@@ -240,17 +224,13 @@ class AbiServiceTest extends TestCase
     public function registerCns()
     {
         ['result' => $contractAddress] = $this->abiClient->deployWithSign(
-            $this->groupId,
             'debdea4753f7400db049f8268587abb4',
-            $this->contractAbi,
-            $this->contractBin,
+            $this->solidity
         );
         $res = $this->abiClient->registerCns(
-            $this->groupId,
-            $this->contractName,
-            $this->faker->uuid(),
+            $this->solidity,
             $contractAddress,
-            $this->contractAbi,
+            $this->faker->uuid(),
             'v1.0.0',
             'debdea4753f7400db049f8268587abb4'
         );
@@ -267,21 +247,17 @@ class AbiServiceTest extends TestCase
     public function findCns()
     {
         ['result' => $contractAddress] = $this->abiClient->deployWithSign(
-            $this->groupId,
             'debdea4753f7400db049f8268587abb4',
-            $this->contractAbi,
-            $this->contractBin,
+            $this->solidity
         );
-        $res = $this->abiClient->registerCns(
-            $this->groupId,
-            $this->contractName,
-            $this->faker->uuid(),
+        $this->abiClient->registerCns(
+            $this->solidity,
             $contractAddress,
-            $this->contractAbi,
+            $this->faker->uuid(),
             'v1.0.0',
             'debdea4753f7400db049f8268587abb4'
         );
-        $res = $this->abiClient->findCns($this->groupId, $contractAddress);
+        $res = $this->abiClient->findCns($contractAddress);
         $this->assertAllResponseKey([
             'code'    => 0,
             'message' => 'success',

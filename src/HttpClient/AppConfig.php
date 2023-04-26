@@ -14,4 +14,15 @@ class AppConfig
         $this->frontUrl = $frontUrl;
         $this->timeout = $timeout;
     }
+
+    public function setFrontUrl(int $groupId): AppConfig
+    {
+        $this->groupId = $groupId;
+        return $this;
+    }
+
+    public function setTimeOut()
+    {
+
+    }
 }

@@ -6,7 +6,7 @@ use Yoruchiaki\WebaseFront\ValueObjects\SolidityAbi;
 
 interface ToolInterface
 {
-    public function decode(int $decodeType, string $methodName, string $input, SolidityAbi $abiList, string $output): array;
+    public function decode(int $decodeType, string $methodName, string $input, SolidityAbi $contractAbi, string $output): array;
 
     public function keypair(string $privateKey): array;
 

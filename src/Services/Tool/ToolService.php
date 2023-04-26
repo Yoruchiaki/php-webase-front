@@ -14,7 +14,8 @@ class ToolService extends BaseService implements ToolInterface
      * @param  int  $decodeType
      * @param  string  $methodName
      * @param  string  $input
-     * @param  SolidityAbi  $abiList
+     * @param  SolidityAbi  $contractAbi
+     * @param  string  $output
      *
      * @return array
      * @throws GuzzleException
@@ -23,14 +24,14 @@ class ToolService extends BaseService implements ToolInterface
         int $decodeType,
         string $methodName,
         string $input,
-        SolidityAbi $abiList,
+        SolidityAbi $contractAbi,
         string $output
     ): array {
         return $this->http->request('POST', 'tool/decode', [
             'decodeType' => $decodeType,
             'methodName' => $methodName,
             'input'      => $input,
-            'abiList'    => $abiList->toArray(),
+            'abiList'    => $contractAbi->toArray(),
             'output'     => $output
         ]);
     }
@@ -41,7 +42,7 @@ class ToolService extends BaseService implements ToolInterface
      * @return array
      * @throws GuzzleException
      */
-    public function keypair(string $privateKey): array
+    public function keypair(string $privateKey = null): array
     {
         return $this->http->request('POST', 'tool/keypair', [
             'privateKey' => $privateKey
@@ -115,7 +116,7 @@ class ToolService extends BaseService implements ToolInterface
     {
         return $this->http->request('POST', 'tool/signMsg', [
             'privateKey' => $privateKey,
-            'rawData'    => $rawData
+            'rawData'    => (string) $rawData
         ]);
     }
 }
