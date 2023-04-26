@@ -1,6 +1,6 @@
 <?php
 
-namespace Yoruchiaki\WebaseFront\Services\Abi;
+namespace Yoruchiaki\WebaseFront\Services\Contract;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Yoruchiaki\WebaseFront\Interfaces\ContractInterface;

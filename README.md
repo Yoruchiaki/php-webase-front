@@ -13,14 +13,14 @@ $ composer require yoruchiaki/php-webase-front
 
 ## 已完成的(已完成E2E测试)
 
-- 合约接口 [Abi](src%2FServices%2FAbi)
+- 合约接口 [Contract](src%2FServices%2FContract)
 - 密钥接口 [PrivateKey](src%2FServices%2FPrivateKey)
 - 交易接口 [Trans](src%2FServices%2FTrans)
 - 工具接口 [Tool](src%2FServices%2FTool)
 
 ## 未完成的(删除代表已完成)
 
-- ~~[AbiInterface.php](src%2FInterfaces%2FAbiInterface.php)~~
+- ~~[ContractInterface.php](src%2FInterfaces%2FContractInterface.php)~~
 - [BaseServiceInterface.php](src%2FInterfaces%2FBaseServiceInterface.php)
 - [CertInterface.php](src%2FInterfaces%2FCertInterface.php)
 - [ChargingInterface.php](src%2FInterfaces%2FChargingInterface.php)
@@ -84,8 +84,8 @@ $httpClient = new HttpRequest(
       )
 );
 
-$abiClient = new \Yoruchiaki\WebaseFront\Services\Abi\ContractService($httpClient);
-//Abi,Bin,Sol都可以使用相同的方法进行初始化.
+$abiClient = new \Yoruchiaki\WebaseFront\Services\Contract\ContractService($httpClient);
+//Contract,Bin,Sol都可以使用相同的方法进行初始化.
 $abi = new \Yoruchiaki\WebaseFront\ValueObjects\SolidityAbi();
 $abi->loadPath('/filePath/demo.abi');// 载入abi文件路径也可以在构造函数中传入文件内容进行初始化
 $bin = new \Yoruchiaki\WebaseFront\ValueObjects\SolidityBin();

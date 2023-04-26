@@ -6,7 +6,7 @@ use Faker\Factory;
 use Faker\Generator;
 use Yoruchiaki\WebaseFront\HttpClient\AppConfig;
 use Yoruchiaki\WebaseFront\HttpClient\HttpRequest;
-use Yoruchiaki\WebaseFront\Services\Abi\ContractService;
+use Yoruchiaki\WebaseFront\Services\Contract\ContractService;
 use Yoruchiaki\WebaseFront\Services\PrivateKey\PrivateKeyService;
 use Yoruchiaki\WebaseFront\Services\Tool\ToolService;
 use Yoruchiaki\WebaseFront\Services\Trans\TransService;
