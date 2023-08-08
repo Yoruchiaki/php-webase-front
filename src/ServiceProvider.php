@@ -8,6 +8,7 @@ use Yoruchiaki\WebaseFront\HttpClient\HttpRequest;
 use Yoruchiaki\WebaseFront\Interfaces\HttpRequestInterface;
 use Yoruchiaki\WebaseFront\Services\Contract\ContractService;
 use Yoruchiaki\WebaseFront\Services\PrivateKey\PrivateKeyService;
+use Yoruchiaki\WebaseFront\Services\Tool\ToolService;
 use Yoruchiaki\WebaseFront\Services\Trans\TransService;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider implements DeferrableProvider
@@ -18,7 +19,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider implements Def
     public function boot(): void
     {
         $this->publishes([
-            __DIR__.'/../config/webase-front.php' => config_path('webase-front.php'),
+            __DIR__ . '/../config/webase-front.php' => config_path('webase-front.php'),
         ], ['webase-front']);
     }
 
@@ -26,7 +27,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider implements Def
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/webase-front.php', 'webase-front'
+            __DIR__ . '/../config/webase-front.php', 'webase-front'
         );
         $this->app->bind(HttpRequestInterface::class, function () {
             return new HttpRequest(
@@ -44,12 +45,18 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider implements Def
             return new TransService($app->make(HttpRequestInterface::class));
         });
 
+        $this->app->singleton(ToolService::class, function ($app) {
+            return new ToolService($app->make(HttpRequestInterface::class));
+        });
+
         $this->app->singleton(PrivateKeyService::class, function ($app) {
             return new PrivateKeyService($app->make(HttpRequestInterface::class));
         });
+
         $this->app->alias(ContractService::class, 'Contract');
         $this->app->alias(TransService::class, 'Trans');
         $this->app->alias(PrivateKeyService::class, 'Pk');
+        $this->app->alias(ToolService::class, 'Tool');
     }
 
     public function provides(): array
