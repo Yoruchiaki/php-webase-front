@@ -10,6 +10,7 @@ use Yoruchiaki\WebaseFront\Services\Contract\ContractService;
 use Yoruchiaki\WebaseFront\Services\PrivateKey\PrivateKeyService;
 use Yoruchiaki\WebaseFront\Services\Tool\ToolService;
 use Yoruchiaki\WebaseFront\Services\Trans\TransService;
+use Yoruchiaki\WebaseFront\Services\Web3\Web3Service;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider implements DeferrableProvider
 {
@@ -37,6 +38,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider implements Def
                 )
             );
         });
+
         $this->app->singleton(ContractService::class, function ($app) {
             return new ContractService($app->make(HttpRequestInterface::class));
         });
@@ -53,10 +55,15 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider implements Def
             return new PrivateKeyService($app->make(HttpRequestInterface::class));
         });
 
+        $this->app->singleton(Web3Service::class, function ($app) {
+            return new Web3Service($app->make(HttpRequestInterface::class));
+        });
+
         $this->app->alias(ContractService::class, 'Contract');
         $this->app->alias(TransService::class, 'Trans');
         $this->app->alias(PrivateKeyService::class, 'Pk');
         $this->app->alias(ToolService::class, 'Tool');
+        $this->app->alias(Web3Service::class, 'Web3');
     }
 
     public function provides(): array
